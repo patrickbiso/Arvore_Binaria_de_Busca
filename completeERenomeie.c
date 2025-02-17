@@ -36,128 +36,128 @@ void imprimirIntervalo(PONT raiz, int min, int max);
 //------------------------------------------------------------------------------
 // 1) Inicializar
 void inicializar(PONT* raiz) {
-    *raiz = NULL;
+    *raiz = NULL; // A árvore começa vazia
 }
 
 //------------------------------------------------------------------------------
 // 2) Criar nó
 PONT criarNo(int valor) {
-    PONT novo = (PONT) malloc(sizeof(NO));
-    if(novo) {
-        novo->chave = valor;
-        novo->contador = 1;
-        novo->esq = NULL;
+    PONT novo = (PONT) malloc(sizeof(NO)); // Aloca memória para o novo nó
+    if(novo) { // Verifica se a alocação foi bem-sucedida
+        novo->chave = valor; // Define o valor do nó
+        novo->contador = 1; // Inicializa o contador como 1
+        novo->esq = NULL; // Define os filhos como NULL
         novo->dir = NULL;
     }
-    return novo;
+    return novo; // Retorna o nó criado
 }
 
 //------------------------------------------------------------------------------
 // 3) Buscar
 PONT buscar(PONT raiz, int valor) {
-    if (raiz == NULL || raiz->chave == valor) return raiz;
-    if (valor < raiz->chave) return buscar(raiz->esq, valor);
-    return buscar(raiz->dir, valor);
+    if (raiz == NULL || raiz->chave == valor) return raiz; // Retorna o nó encontrado ou NULL se não existir
+    if (valor < raiz->chave) return buscar(raiz->esq, valor); // Busca na subárvore esquerda
+    return buscar(raiz->dir, valor); // Busca na subárvore direita 
 }
 
 //------------------------------------------------------------------------------
 // 4) Inserir
 PONT inserir(PONT raiz, int valor) {
-    if (raiz == NULL) return criarNo(valor);
-    if (valor < raiz->chave) raiz->esq = inserir(raiz->esq, valor);
-    else if (valor > raiz->chave) raiz->dir = inserir(raiz->dir, valor);
-    else raiz->contador++;
-    return raiz;
+    if (raiz == NULL) return criarNo(valor); // Se a árvore estiver vazia, cria um novo nó
+    if (valor < raiz->chave) raiz->esq = inserir(raiz->esq, valor); // Insere na esquerda se for menor
+    else if (valor > raiz->chave) raiz->dir = inserir(raiz->dir, valor); // Insere na direita se for maior
+    else raiz->contador++; // Se o valor já existe, apenas incrementa o contador
+    return raiz; // Retorna a raiz da árvore após a inserção
 }
 
 //------------------------------------------------------------------------------
 // 5) Remover UMA ocorrência
 PONT removerUmaOcorrencia(PONT raiz, int valor) {
-    if (raiz == NULL) return NULL;
-    if (valor < raiz->chave) raiz->esq = removerUmaOcorrencia(raiz->esq, valor);
-    else if (valor > raiz->chave) raiz->dir = removerUmaOcorrencia(raiz->dir, valor);
+    if (raiz == NULL) return NULL; // Se o nó não existe, retorna NULL
+    if (valor < raiz->chave) raiz->esq = removerUmaOcorrencia(raiz->esq, valor); // Procura na esquerda
+    else if (valor > raiz->chave) raiz->dir = removerUmaOcorrencia(raiz->dir, valor); // Procura na direita
     else {
-        if (raiz->contador > 1) raiz->contador--;
-        else {
+        if (raiz->contador > 1) raiz->contador--; // Se houver mais de uma ocorrência, reduz o contador
+        else { // Caso contrário, remove o nó
             if (raiz->esq == NULL) {
                 PONT temp = raiz->dir;
                 free(raiz);
-                return temp;
+                return temp; // Retorna o filho direito se a esquerda for NULL
             } else if (raiz->dir == NULL) {
                 PONT temp = raiz->esq;
                 free(raiz);
                 return temp;
             }
             PONT temp = raiz->dir;
-            while (temp->esq) temp = temp->esq;
-            raiz->chave = temp->chave;
+            while (temp->esq) temp = temp->esq; // Encontra o menor valor na subárvore direita
+            raiz->chave = temp->chave;  // Substitui o valor atual pelo menor da direita
             raiz->contador = temp->contador;
             temp->contador = 1;
             raiz->dir = removerUmaOcorrencia(raiz->dir, temp->chave);
         }
     }
-    return raiz;
+    return raiz; // Retorna a raiz ajustada
 }
 
 //------------------------------------------------------------------------------
 // 6) Remover TODAS ocorrências
 PONT removerTodasOcorrencias(PONT raiz, int valor) {
-    while (buscar(raiz, valor)) raiz = removerUmaOcorrencia(raiz, valor);
-    return raiz;
+    while (buscar(raiz, valor)) raiz = removerUmaOcorrencia(raiz, valor); // Enquanto o valor existir na árvore, remove uma ocorrência por vez
+    return raiz; // Retorna a raiz ajustada
 }
 
 //------------------------------------------------------------------------------
 // 7) Exibir InOrder
 void exibirInOrder(PONT raiz) {
     if (raiz != NULL) {
-        exibirInOrder(raiz->esq);
-        for (int i = 0; i < raiz->contador; i++) printf("%d ", raiz->chave);
-        exibirInOrder(raiz->dir);
+        exibirInOrder(raiz->esq); // Percorre a subárvore esquerda
+        for (int i = 0; i < raiz->contador; i++) printf("%d ", raiz->chave); // Imprime a chave considerando seu contador
+        exibirInOrder(raiz->dir); / Percorre a subárvore direita
     }
 }
 
 //------------------------------------------------------------------------------
 // 8) Contar nós distintos
 int contarNos(PONT raiz) {
-    if (raiz == NULL) return 0;
-    return 1 + contarNos(raiz->esq) + contarNos(raiz->dir);
+    if (raiz == NULL) return 0; // Retorna 0 se a árvore estiver vazia
+    return 1 + contarNos(raiz->esq) + contarNos(raiz->dir); // Soma os nós recursivamente
 }
 
 
 //------------------------------------------------------------------------------
 // 9) Contar total de elementos (somando contadores)
 int contarTotalElementos(PONT raiz) {
-    if (raiz == NULL) return 0;
+    if (raiz == NULL) return 0; // Retorna 0 se a árvore estiver vazia
     return raiz->contador + contarTotalElementos(raiz->esq) + contarTotalElementos(raiz->dir);
 }
 
 //------------------------------------------------------------------------------
 // 10) k-ésimo menor
 int kEsimoMenor(PONT raiz, int k) {
-    if (raiz == NULL) return -1;
-    int esquerda = contarTotalElementos(raiz->esq);
-    if (k <= esquerda) return kEsimoMenor(raiz->esq, k);
-    if (k > esquerda + raiz->contador) return kEsimoMenor(raiz->dir, k - esquerda - raiz->contador);
-    return raiz->chave;
+    if (raiz == NULL) return -1; // Retorna -1 se não houver elementos suficientes
+    int esquerda = contarTotalElementos(raiz->esq); // Conta elementos na esquerda
+    if (k <= esquerda) return kEsimoMenor(raiz->esq, k); // Busca na esquerda
+    if (k > esquerda + raiz->contador) return kEsimoMenor(raiz->dir, k - esquerda - raiz->contador); // Busca na direita
+    return raiz->chave; // Retorna o valor encontrado
 }
 
 //------------------------------------------------------------------------------
 // 11) Imprimir Intervalo [min, max]
 void imprimirIntervalo(PONT raiz, int min, int max) {
     if (raiz != NULL) {
-        if (raiz->chave > min) imprimirIntervalo(raiz->esq, min, max);
+        if (raiz->chave > min) imprimirIntervalo(raiz->esq, min, max); // Busca valores à esquerda
         if (raiz->chave >= min && raiz->chave <= max)
-            for (int i = 0; i < raiz->contador; i++) printf("%d ", raiz->chave);
-        if (raiz->chave < max) imprimirIntervalo(raiz->dir, min, max);
+            for (int i = 0; i < raiz->contador; i++) printf("%d ", raiz->chave); // Imprime valores dentro do intervalo
+        if (raiz->chave < max) imprimirIntervalo(raiz->dir, min, max); // Busca valores à direita
     }
 }
 //------------------------------------------------------------------------------
 
 PONT lowestCommonAncestor(PONT raiz, int val1, int val2) {
-    if (raiz == NULL) return NULL;
-    if (raiz->chave > val1 && raiz->chave > val2) return lowestCommonAncestor(raiz->esq, val1, val2);
-    if (raiz->chave < val1 && raiz->chave < val2) return lowestCommonAncestor(raiz->dir, val1, val2);
-    return raiz;
+    if (raiz == NULL) return NULL; // Se a árvore estiver vazia, retorna NULL
+    if (raiz->chave > val1 && raiz->chave > val2) return lowestCommonAncestor(raiz->esq, val1, val2); // Busca na esquerda
+    if (raiz->chave < val1 && raiz->chave < val2) return lowestCommonAncestor(raiz->dir, val1, val2);  // Busca na direita
+    return raiz; // Retorna o nó atual como ancestral comum
 }
 
 
