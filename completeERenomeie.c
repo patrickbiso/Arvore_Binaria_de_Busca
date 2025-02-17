@@ -194,13 +194,13 @@ int main() {
     // InOrder final esperado (antes de quaisquer remoções):
     //     "5 5 5 10 10 15 18"
     //
-    inserir(raiz, 10); 
-    inserir(raiz, 5);
-    inserir(raiz, 15);
-    inserir(raiz, 10); // repetido => contador(10)++
-    inserir(raiz, 5);  // repetido => contador(5)++
-    inserir(raiz, 5);  // repetido => contador(5)++
-    inserir(raiz, 18);
+    raiz = inserir(raiz, 10); 
+raiz = inserir(raiz, 5);
+raiz = inserir(raiz, 15);
+raiz = inserir(raiz, 10);
+raiz = inserir(raiz, 5);
+raiz = inserir(raiz, 5);
+raiz = inserir(raiz, 18);
 
     printf("\n--- APÓS INSERIR (10,5,15,10,5,5,18) ---\n");
     printf("InOrder esperado: 5 5 5 10 10 15 18\n");
