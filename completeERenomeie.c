@@ -73,69 +73,91 @@ PONT inserir(PONT raiz, int valor) {
 //------------------------------------------------------------------------------
 // 5) Remover UMA ocorrência
 PONT removerUmaOcorrencia(PONT raiz, int valor) {
-    // COMPLETAR
-    // 1) Buscar nó do valor:
-    //    - se não achar, não faz nada
-    // 2) se achar e contador>1 => decrementa
-    // 3) se contador==1 => remoção clássica de BST (casos 0,1,2 filhos)
-    return raiz; // provisório
+    if (raiz == NULL) return NULL;
+    if (valor < raiz->chave) raiz->esq = removerUmaOcorrencia(raiz->esq, valor);
+    else if (valor > raiz->chave) raiz->dir = removerUmaOcorrencia(raiz->dir, valor);
+    else {
+        if (raiz->contador > 1) raiz->contador--;
+        else {
+            if (raiz->esq == NULL) {
+                PONT temp = raiz->dir;
+                free(raiz);
+                return temp;
+            } else if (raiz->dir == NULL) {
+                PONT temp = raiz->esq;
+                free(raiz);
+                return temp;
+            }
+            PONT temp = raiz->dir;
+            while (temp->esq) temp = temp->esq;
+            raiz->chave = temp->chave;
+            raiz->contador = temp->contador;
+            temp->contador = 1;
+            raiz->dir = removerUmaOcorrencia(raiz->dir, temp->chave);
+        }
+    }
+    return raiz;
 }
 
 //------------------------------------------------------------------------------
 // 6) Remover TODAS ocorrências
 PONT removerTodasOcorrencias(PONT raiz, int valor) {
-    // COMPLETAR
-    // 1) Buscar nó do valor
-    //    - se não achar, não faz nada
-    // 2) se achar => remove nó da BST (casos 0,1,2 filhos)
-    return raiz; // provisório
+    while (buscar(raiz, valor)) raiz = removerUmaOcorrencia(raiz, valor);
+    return raiz;
 }
 
 //------------------------------------------------------------------------------
 // 7) Exibir InOrder
 void exibirInOrder(PONT raiz) {
-    // COMPLETAR
-    // Percurso InOrder: esq -> (raiz->chave impresso contador vezes) -> dir
+    if (raiz != NULL) {
+        exibirInOrder(raiz->esq);
+        for (int i = 0; i < raiz->contador; i++) printf("%d ", raiz->chave);
+        exibirInOrder(raiz->dir);
+    }
 }
 
 //------------------------------------------------------------------------------
 // 8) Contar nós distintos
 int contarNos(PONT raiz) {
-    // COMPLETAR
-    // Se raiz==NULL => 0
-    // Senao => 1 + contarNos(esq) + contarNos(dir)
-    return 0; // provisório
+    if (raiz == NULL) return 0;
+    return 1 + contarNos(raiz->esq) + contarNos(raiz->dir);
 }
+
 
 //------------------------------------------------------------------------------
 // 9) Contar total de elementos (somando contadores)
 int contarTotalElementos(PONT raiz) {
-    // COMPLETAR
-    // soma = raiz->contador + subárvores
-    return 0; // provisório
+    if (raiz == NULL) return 0;
+    return raiz->contador + contarTotalElementos(raiz->esq) + contarTotalElementos(raiz->dir);
 }
 
 //------------------------------------------------------------------------------
 // 10) k-ésimo menor
 int kEsimoMenor(PONT raiz, int k) {
-    // COMPLETAR
-    // Deve considerar o contador de cada nó
-    // Retorne -1 se não existir
-    return -1; // provisório
+    if (raiz == NULL) return -1;
+    int esquerda = contarTotalElementos(raiz->esq);
+    if (k <= esquerda) return kEsimoMenor(raiz->esq, k);
+    if (k > esquerda + raiz->contador) return kEsimoMenor(raiz->dir, k - esquerda - raiz->contador);
+    return raiz->chave;
 }
 
 //------------------------------------------------------------------------------
 // 11) Imprimir Intervalo [min, max]
 void imprimirIntervalo(PONT raiz, int min, int max) {
-    // COMPLETAR
-    // Imprimir todos (com contadores) que estejam no intervalo [min, max]
+    if (raiz != NULL) {
+        if (raiz->chave > min) imprimirIntervalo(raiz->esq, min, max);
+        if (raiz->chave >= min && raiz->chave <= max)
+            for (int i = 0; i < raiz->contador; i++) printf("%d ", raiz->chave);
+        if (raiz->chave < max) imprimirIntervalo(raiz->dir, min, max);
+    }
 }
-
 //------------------------------------------------------------------------------
 
 PONT lowestCommonAncestor(PONT raiz, int val1, int val2) {
-    // COMPLETAR
-    return NULL;
+    if (raiz == NULL) return NULL;
+    if (raiz->chave > val1 && raiz->chave > val2) return lowestCommonAncestor(raiz->esq, val1, val2);
+    if (raiz->chave < val1 && raiz->chave < val2) return lowestCommonAncestor(raiz->dir, val1, val2);
+    return raiz;
 }
 
 
