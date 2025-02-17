@@ -55,24 +55,19 @@ PONT criarNo(int valor) {
 //------------------------------------------------------------------------------
 // 3) Buscar
 PONT buscar(PONT raiz, int valor) {
-    // COMPLETAR
-    // Retorna ponteiro para nó com chave == valor ou NULL se não existir.
-    // Usar a lógica de BST:
-    //  - se valor < raiz->chave => buscar à esquerda
-    //  - se valor > raiz->chave => buscar à direita
-    //  - se valor == raiz->chave => retorna raiz
-    return NULL; // provisório
+    if (raiz == NULL || raiz->chave == valor) return raiz;
+    if (valor < raiz->chave) return buscar(raiz->esq, valor);
+    return buscar(raiz->dir, valor);
 }
 
 //------------------------------------------------------------------------------
 // 4) Inserir
 PONT inserir(PONT raiz, int valor) {
-    // COMPLETAR
-    // Se raiz == NULL => cria nó
-    // Se valor < raiz->chave => raiz->esq = inserir(raiz->esq, valor)
-    // Se valor > raiz->chave => raiz->dir = inserir(raiz->dir, valor)
-    // Se valor == raiz->chave => incrementa raiz->contador
-    return raiz; // provisório
+    if (raiz == NULL) return criarNo(valor);
+    if (valor < raiz->chave) raiz->esq = inserir(raiz->esq, valor);
+    else if (valor > raiz->chave) raiz->dir = inserir(raiz->dir, valor);
+    else raiz->contador++;
+    return raiz;
 }
 
 //------------------------------------------------------------------------------
